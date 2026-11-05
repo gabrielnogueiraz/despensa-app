@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 192 192" width="192" height="192">
+  <rect width="192" height="192" rx="48" fill="#FAF8F5"/>
+  <rect x="10" y="10" width="172" height="172" rx="40" fill="#FFFFFF" stroke="#EAE6DF" stroke-width="2"/>
+  <g transform="translate(38, 40) scale(0.39)">
+    <!-- Cesta cerâmica suave -->
+    <path d="M40 160 C40 240, 90 270, 150 270 C210 270, 260 240, 260 160 Z" fill="#D9532F" opacity="0.95"/>
+    <path d="M30 160 Q150 145 270 160 Q150 175 30 160 Z" fill="#BF3F1D"/>
+    <!-- Alça da cesta -->
+    <path d="M70 155 C70 50, 230 50, 230 155" fill="none" stroke="#716D66" stroke-width="14" stroke-linecap="round"/>
+    <!-- Folhas de Louro / Sálvia Fresca -->
+    <path d="M150 90 C120 70, 100 110, 150 135 C200 110, 180 70, 150 90 Z" fill="#26593F"/>
+    <path d="M150 95 L150 135" stroke="#1D4330" stroke-width="3" stroke-linecap="round"/>
+    <circle cx="185" cy="115" r="8" fill="#D97706"/>
+  </g>
+</svg>

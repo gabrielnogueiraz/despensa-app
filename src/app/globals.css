@@ -1,26 +1,91 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
+  /* Fundo e superfícies acolhedoras */
+  --canvas: #FAF8F5;
+  --surface: #FFFFFF;
+  --surface-subtle: #F3EFE9;
+  --surface-hover: #ECE7DF;
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
+  /* Tipografia Espresso Profundo */
+  --text-primary: #1C1917;
+  --text-secondary: #716D66;
+  --text-tertiary: #A8A29A;
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+  /* Terracota Artesanal */
+  --terracotta: #D9532F;
+  --terracotta-hover: #BF3F1D;
+  --terracotta-soft: #FDEEE9;
+
+  /* Verde Sálvia & Folha */
+  --sage: #26593F;
+  --sage-hover: #1D4330;
+  --sage-surface: #ECF5F0;
+
+  /* Âmbar Ocre (Orçamento) */
+  --amber: #D97706;
+  --amber-surface: #FEF3C7;
+
+  /* Divisores Estruturais */
+  --divider: #EAE6DF;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background-color: var(--canvas);
+  color: var(--text-primary);
+  font-feature-settings: "cv02", "cv03", "cv04", "cv11";
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  user-select: none;
+  -webkit-user-select: none;
+  -webkit-touch-callout: none;
+  overscroll-behavior-y: none;
+}
+
+/* Permitir seleção em campos de input e texto selecionável */
+input, textarea, [contenteditable="true"], .selectable {
+  user-select: text;
+  -webkit-user-select: text;
+}
+
+/* Suporte a Safe Area iOS/Android */
+.pt-safe {
+  padding-top: max(env(safe-area-inset-top, 0px), 12px);
+}
+
+.pb-safe {
+  padding-bottom: max(env(safe-area-inset-bottom, 0px), 16px);
+}
+
+.mb-safe {
+  margin-bottom: max(env(safe-area-inset-bottom, 0px), 16px);
+}
+
+/* Tabular figures para moedas */
+.tabular-nums {
+  font-variant-numeric: tabular-nums;
+}
+
+/* Suporte a toque mobile */
+button, a, [role="button"] {
+  touch-action: manipulation;
+}
+
+/* Scrollbar refinada invisível mas funcional */
+::-webkit-scrollbar {
+  width: 4px;
+  height: 4px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #EAE6DF;
+  border-radius: 9999px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #716D66;
 }
