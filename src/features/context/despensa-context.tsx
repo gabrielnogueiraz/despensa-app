@@ -217,6 +217,7 @@ export function DespensaProvider({ children }: { children: React.ReactNode }) {
         .from('household_members')
         .select('household_id, role, households(*)')
         .eq('user_id', user.id)
+        .order('joined_at', { ascending: false })
         .limit(1)
         .maybeSingle();
 

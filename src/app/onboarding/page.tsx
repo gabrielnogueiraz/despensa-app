@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { createClient } from '@/lib/supabase/client';
 import { useDespensa } from '@/features/context/despensa-context';
@@ -26,6 +26,38 @@ export default function OnboardingPage() {
   const [loading, setLoading] = useState(false);
   const [loadingMessage, setLoadingMessage] = useState('Preparando seu espaço...');
   const [errorMsg, setErrorMsg] = useState('');
+
+  // Previne que usuários com convite pendente ou que já possuem lar fiquem presos no onboarding
+  useEffect(() => {
+    async function checkExisting() {
+      try {
+        const pendingToken = typeof window !== 'undefined' ? localStorage.getItem('despensa_invite_token') : null;
+        if (pendingToken) {
+          router.replace(`/invite/${pendingToken}`);
+          return;
+        }
+
+        const supabase = createClient() as any;
+        const { data: { user } } = await supabase.auth.getUser();
+        if (user) {
+          const { data: member } = await supabase
+            .from('household_members')
+            .select('household_id')
+            .eq('user_id', user.id)
+            .order('joined_at', { ascending: false })
+            .limit(1)
+            .maybeSingle();
+
+          if (member?.household_id) {
+            router.replace('/');
+          }
+        }
+      } catch (err) {
+        console.error('Erro ao verificar status no onboarding:', err);
+      }
+    }
+    checkExisting();
+  }, [router]);
 
   // Etapa 1: Espaço
   const [householdName, setHouseholdName] = useState('Nosso Lar');

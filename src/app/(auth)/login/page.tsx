@@ -1,14 +1,17 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, Suspense } from 'react';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { createClient } from '@/lib/supabase/client';
 import { SignIn, GoogleLogo, Envelope, LockKey, ArrowRight } from '@phosphor-icons/react';
 import { triggerHaptic } from '@/lib/haptics';
 
-export default function LoginPage() {
+function LoginForm() {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const next = searchParams.get('next') || '';
+
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
@@ -35,11 +38,17 @@ export default function LoginPage() {
       } else if (data.user) {
         triggerHaptic('success');
         
+        if (next) {
+          router.push(next);
+          return;
+        }
+
         // Verifica se usuário já tem household
         const { data: member } = await supabase
           .from('household_members')
           .select('household_id')
           .eq('user_id', data.user.id)
+          .order('joined_at', { ascending: false })
           .limit(1)
           .maybeSingle();
 
@@ -62,10 +71,14 @@ export default function LoginPage() {
     try {
       const supabase = createClient();
       const origin = window.location.origin;
+      const callbackUrl = next 
+        ? `${origin}/auth/callback?next=${encodeURIComponent(next)}` 
+        : `${origin}/auth/callback`;
+
       const { error } = await supabase.auth.signInWithOAuth({
         provider: 'google',
         options: {
-          redirectTo: `${origin}/auth/callback`,
+          redirectTo: callbackUrl,
         },
       });
 
@@ -89,7 +102,9 @@ export default function LoginPage() {
           Entrar no Despensa
         </h2>
         <p className="text-xs text-[#716D66]">
-          Compras domésticas e controle de gastos compartilhados
+          {next.startsWith('/invite/') 
+            ? 'Faça login para aceitar o convite e entrar no lar' 
+            : 'Compras domésticas e controle de gastos compartilhados'}
         </p>
       </div>
 
@@ -107,56 +122,60 @@ export default function LoginPage() {
         className="w-full py-3 px-4 rounded-xl bg-white border border-stone-200 text-[#1C1917] font-bold text-xs flex items-center justify-center gap-2 hover:bg-[#FAF8F5] active:scale-98 transition-all shadow-2xs disabled:opacity-70"
       >
         <GoogleLogo className="w-4 h-4 text-[#D9532F]" weight="bold" />
-        {googleLoading ? 'Conectando ao Google...' : 'Continuar com o Google'}
+        {googleLoading ? 'Conectando ao Google...' : 'Entrar com o Google'}
       </button>
 
-      <div className="relative flex py-1 items-center">
-        <div className="flex-grow border-t border-stone-200" />
-        <span className="flex-shrink mx-3 text-xs text-[#A8A29A]">ou com e-mail</span>
-        <div className="flex-grow border-t border-stone-200" />
+      <div className="flex items-center gap-3">
+        <div className="h-px bg-stone-200 flex-1" />
+        <span className="text-[10px] font-bold uppercase tracking-wider text-[#A8A29A]">
+          ou com e-mail
+        </span>
+        <div className="h-px bg-stone-200 flex-1" />
       </div>
 
+      {/* Formulário Tradicional */}
       <form onSubmit={handleLogin} className="space-y-4">
         <div>
-          <label className="block text-xs font-semibold text-[#716D66] mb-1">
+          <label className="block text-xs font-bold text-[#1C1917] mb-1.5">
             E-mail
           </label>
           <div className="relative">
-            <Envelope className="w-4 h-4 text-[#A8A29A] absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none" />
+            <Envelope className="w-4 h-4 text-[#A8A29A] absolute left-3.5 top-1/2 -translate-y-1/2" />
             <input
               type="email"
+              required
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              placeholder="voce@exemplo.com"
-              required
-              className="w-full pl-10 pr-3.5 py-2.5 rounded-xl bg-[#FAF8F5] border border-stone-200 text-sm font-medium focus:outline-none focus:border-[#D9532F]"
+              placeholder="seu@email.com"
+              className="w-full pl-10 pr-4 py-2.5 bg-[#FAF8F5] border border-stone-200 rounded-xl text-xs text-[#1C1917] focus:outline-none focus:border-[#D9532F] focus:ring-1 focus:ring-[#D9532F] transition-all"
             />
           </div>
         </div>
 
         <div>
-          <div className="flex items-center justify-between mb-1">
-            <label className="block text-xs font-semibold text-[#716D66]">
-              Senha
-            </label>
-            <Link
-              href="/forgot-password"
-              className="text-[11px] text-[#D9532F] hover:underline font-medium"
-            >
-              Esqueceu?
-            </Link>
-          </div>
+          <label className="block text-xs font-bold text-[#1C1917] mb-1.5">
+            Senha
+          </label>
           <div className="relative">
-            <LockKey className="w-4 h-4 text-[#A8A29A] absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none" />
+            <LockKey className="w-4 h-4 text-[#A8A29A] absolute left-3.5 top-1/2 -translate-y-1/2" />
             <input
               type="password"
+              required
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               placeholder="••••••••"
-              required
-              className="w-full pl-10 pr-3.5 py-2.5 rounded-xl bg-[#FAF8F5] border border-stone-200 text-sm font-medium focus:outline-none focus:border-[#D9532F]"
+              className="w-full pl-10 pr-4 py-2.5 bg-[#FAF8F5] border border-stone-200 rounded-xl text-xs text-[#1C1917] focus:outline-none focus:border-[#D9532F] focus:ring-1 focus:ring-[#D9532F] transition-all"
             />
           </div>
+        </div>
+
+        <div className="flex items-center justify-end">
+          <Link
+            href="/forgot-password"
+            className="text-[11px] font-semibold text-[#716D66] hover:text-[#D9532F]"
+          >
+            Esqueceu sua senha?
+          </Link>
         </div>
 
         <button
@@ -171,12 +190,20 @@ export default function LoginPage() {
 
       <div className="text-center pt-2">
         <Link
-          href="/register"
+          href={next ? `/register?next=${encodeURIComponent(next)}` : '/register'}
           className="text-xs font-semibold text-[#716D66] hover:text-[#1C1917]"
         >
           Não tem conta? <span className="text-[#D9532F] underline">Cadastre-se</span>
         </Link>
       </div>
     </div>
+  );
+}
+
+export default function LoginPage() {
+  return (
+    <Suspense fallback={<div className="text-center text-xs text-[#716D66] p-8">Carregando...</div>}>
+      <LoginForm />
+    </Suspense>
   );
 }
