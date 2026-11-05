@@ -17,14 +17,20 @@ export const metadata: Metadata = {
   title: "Despensa — Compras Domésticas",
   description: "Organização e modo supermercado compartilhado a dois em tempo real.",
   manifest: "/manifest.webmanifest",
+  applicationName: "Despensa",
   appleWebApp: {
     capable: true,
     statusBarStyle: "default",
     title: "Despensa",
   },
   icons: {
-    icon: "/icons/icon-192.svg",
-    apple: "/icons/icon-192.svg",
+    icon: [
+      { url: "/favicon-32x32.png", sizes: "32x32", type: "image/png" },
+      { url: "/icons/icon-192.png", sizes: "192x192", type: "image/png" },
+    ],
+    apple: [
+      { url: "/apple-touch-icon.png", sizes: "180x180", type: "image/png" },
+    ],
   },
 };
 
@@ -45,7 +51,12 @@ export default function RootLayout({
   return (
     <html lang="pt-BR" className={`${plusJakarta.variable} h-full`}>
       <head>
-        <link rel="apple-touch-icon" href="/icons/icon-192.svg" />
+        <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+        <link rel="apple-touch-icon-precomposed" sizes="180x180" href="/apple-touch-icon.png" />
+        <meta name="apple-mobile-web-app-capable" content="yes" />
+        <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+        <meta name="apple-mobile-web-app-title" content="Despensa" />
+        <meta name="mobile-web-app-capable" content="yes" />
       </head>
       <body className="min-h-full flex flex-col font-sans bg-[#FAF8F5] text-[#1C1917] antialiased">
         <Toaster position="top-center" richColors theme="light" />

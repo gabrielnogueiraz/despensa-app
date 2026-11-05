@@ -1,10 +1,14 @@
 // Despensa PWA Service Worker
-const CACHE_NAME = 'despensa-cache-v1';
+const CACHE_NAME = 'despensa-cache-v2';
 const STATIC_ASSETS = [
   '/',
   '/manifest.webmanifest',
-  '/icons/icon-192.svg',
-  '/icons/icon-512.svg',
+  '/apple-touch-icon.png',
+  '/icons/apple-touch-icon.png',
+  '/icons/icon-192.png',
+  '/icons/icon-512.png',
+  '/icons/icon-maskable-512.png',
+  '/favicon-32x32.png',
 ];
 
 self.addEventListener('install', (event) => {
